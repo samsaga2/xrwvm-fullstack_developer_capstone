@@ -136,3 +136,13 @@ def get_cars(request):
     for car_model in car_models:
         cars.append({"CarModel": car_model.name, "CarMake": car_model.car_make.name})
     return JsonResponse({"CarModels":cars})
+
+
+def get_dealer_reviews(request, dealer_id):
+    if dealer_id:
+        endpoint = f"/fetchReviews/dealer/{dealer_id}"
+        reviews = get_request(endpoint)
+        for review_detail in reviews:
+            review_detail['sentiment'] = analyze_review_sentiments(review_detail['review'])['sentiment']
+        return JsonResponse({"status": 200, "reviews": reviews})
+    return JsonResponse({"status": 400, "message": "Bad Request"}, status=400)
